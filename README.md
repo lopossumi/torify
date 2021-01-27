@@ -1,2 +1,0 @@
-# torify
-Tori.fi Notifications

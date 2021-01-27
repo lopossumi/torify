@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,8 +11,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Notifications.Wpf;
-using Torify.Annotations;
+using Notifications.Wpf.Core;
 using Timer = System.Timers.Timer;
 
 namespace Torify
@@ -72,7 +72,7 @@ namespace Torify
             }
         }
 
-        private void TimerOnElapsed(object sender, ElapsedEventArgs e)
+        private async void TimerOnElapsed(object sender, ElapsedEventArgs e)
         {
             var newItems = RequestItems();
             if (!newItems.Any()) return;
@@ -81,7 +81,8 @@ namespace Torify
             if (firstNewItem.Equals(Items.First())) { return; }
 
             Items = newItems;
-            notificationManager.Show(new NotificationContent
+            await notificationManager.ShowAsync(
+                new NotificationContent
                 {
                     Title = "New item for sale",
                     Message = $"{firstNewItem.Description} - {firstNewItem.Price}€",
@@ -96,14 +97,20 @@ namespace Torify
 
         private void OpenInBrowser(string uri)
         {
-            if (!string.IsNullOrEmpty(uri))
+            if (string.IsNullOrEmpty(uri)) return;
+            var psi = new ProcessStartInfo
             {
-                System.Diagnostics.Process.Start(uri);
-            }
+                FileName = "cmd",
+                Arguments = $"/c start {uri}",
+                WindowStyle = ProcessWindowStyle.Hidden,
+                UseShellExecute = true,
+                CreateNoWindow = true
+            };
+            Process.Start(psi);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        [NotifyPropertyChangedInvocator]
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

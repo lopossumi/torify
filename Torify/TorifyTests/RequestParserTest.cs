@@ -1,9 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using NUnit.Framework;
 using Torify;
 
-namespace UnitTests
+namespace TorifyTests
 {
     [TestFixture]
     public class RequestParserTest : TestBase

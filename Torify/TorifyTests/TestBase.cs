@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using NUnit.Framework;
 
-namespace UnitTests
+namespace TorifyTests
 {
     public class TestBase
     {
